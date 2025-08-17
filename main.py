@@ -56,11 +56,37 @@ def main()->None:
     gameState = ChessEngine.GameState()
     load_images()
     Running = True
+    sqSelected = ()
+    userClicks = []
     while Running:
-        #loop to poll the event queue
+        #loop to poll the event queue for predefined event type 
         for event in Pyg.event.get():
             if event.type == Pyg.QUIT:
                 Running = False
+            elif event.type == Pyg.MOUSEBUTTONDOWN:
+                position = Pyg.mouse.get_pos()
+                col= position[0]//SQ_SIZE
+                row = position[1]//SQ_SIZE
+                
+
+                if (sqSelected == (row , col)):
+                    sqSelected = ()
+                    userClicks = []
+
+                else:
+                    sqSelected = (row, col)
+                    userClicks.append(sqSelected)
+                
+                if len(userClicks) == 2:
+                    move = ChessEngine.Move(gameState.board, userClicks[0], userClicks[1])
+                    print(move.getChessNotation())
+                    gameState.makeMove(move)
+                    #reset the piece tracing mechanism
+                    sqSelected = ()
+                    userClicks = []
+                    
+
+            
         DrawGameState(screen, gameState)
         clock.tick(FPS)
         Pyg.display.flip()
