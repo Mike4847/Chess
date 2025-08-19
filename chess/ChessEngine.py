@@ -27,6 +27,69 @@ class GameState():
         self.moveLog.append(move)
         self.WhiteToMove = not self.WhiteToMove 
 
+    def undoMove(self):
+        """
+        !!(NOTE) to undo a move is basically returning the state of the board from where initialy was.
+
+        """
+        while(len(self.moveLog) > 0):
+            move = self.moveLog.pop()
+            self.board[move.startRow][move.startCol] = self.board[move.endRow][move.endCol]
+            self.board[move.endRow][move.endCol] =  move.CapturedPiece             
+            self.WhiteToMove = not self.WhiteToMove
+    
+    def PawnMove(self, piece):
+        if (piece[1] == "p"):
+            ...
+
+    
+
+
+
+
+    def validMoves(self):
+        return self.getAllPossibleMoves()
+
+
+    def getAllPossibleMoves(self) -> dict:
+        moves = {}
+        for row in range(len(self.board)):
+            for col in range(len(self.board[0])):
+                piece = self.board[row][col]
+                pieceColor = piece[0]
+                if pieceColor == 'w' or pieceColor =='b':
+                    pieceType = piece[1]
+                    if(pieceType =="B"):
+
+                        moves[pieceType] = self.BishopMove(piece)                        
+                    if (pieceType == "N"):
+                        moves[pieceType] = self.NightMove(piece)
+                    elif (pieceType == "Q"):
+                        moves[pieceType] = self.QueenMove(piece)
+                    
+                    elif (pieceType == "K"):
+                        moves[pieceType] = self.kingMove(piece)
+                    elif (pieceType == "R"):
+                        moves[pieceType] = self.RookMove(piece)
+                    else :
+                        moves[pieceType] = self.PawnMove(piece)
+        return moves
+    
+    def BishopMove(self, piece):
+        pass
+    
+
+    def NightMove(self, piece):
+        pass
+
+    def QueenMove(self, piece):
+        pass
+
+    def RookMove(self, piece):
+        pass
+
+    def kingMove(self, piece):
+        pass
 
 
 class Move():
@@ -41,18 +104,36 @@ class Move():
         self.startCol = sqStart[1]
         self.endRow = sqEnd[0]
         self.endCol = sqEnd[1]
-        self.ChessNotation = {"Knight":"K", "Rook":"R", "King": "K", "Queen":"Q", "Bishop": "B"}
-
+        
         self.movedPiece = board[self.startRow][self.startCol]
-        self.toPiece = board[self.endRow][self.endCol]
+        self.CapturedPiece = board[self.endRow][self.endCol]
+        self.PieceNotation = ""
 
-    def getFilRank(self, row , column):
-        return self.colToFile[column] + self.rowToRank[row]
+        if (len(self.movedPiece) == 2 and self.movedPiece[1] != "p"):
+            self.PieceNotation = self.movedPiece[1]
+        
 
 
 
-    def getChessNotation(self):
-        return self.getFilRank(self.startRow, self.startCol) +  self.getFilRank(self.endRow, self.endCol)
+        #if(switch)
+
+
+    def getFilRank(self,Endrow , Endcol):
+        """
+        the standard naming accepted by FIDE(algebraic notation-- though it a misnomer!!):
+        'E1' <file, rank >
+        rank refers to the list of horizontal square in the chess board.
+        file refers to the list of vertical square in the chess board.
+        """
+        return self.colToFile[Endcol] + self.PieceNotation +self.rowToRank[Endrow]
+    
+
+    def getChessNotation(self, board):
+        """
+        i am gonna try as much as possible to keep the notation as the : ALGEBRA NOTATION
+        """
+
+        return print(f"From square:--> {self.getFilRank(self.startRow, self.startCol)}\t.To square :-->{self.getFilRank(self.endRow, self.endCol)}")
         
 
 

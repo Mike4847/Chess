@@ -1,5 +1,6 @@
 import pygame as Pyg
 from chess import ChessEngine
+import math as mathematics 
 
 WIDTH = HEIGHT = 512
 DIMENTION = 8
@@ -65,8 +66,8 @@ def main()->None:
                 Running = False
             elif event.type == Pyg.MOUSEBUTTONDOWN:
                 position = Pyg.mouse.get_pos()
-                col= position[0]//SQ_SIZE
-                row = position[1]//SQ_SIZE
+                col= position[0] // SQ_SIZE
+                row = position[1] // SQ_SIZE
                 
 
                 if (sqSelected == (row , col)):
@@ -79,11 +80,16 @@ def main()->None:
                 
                 if len(userClicks) == 2:
                     move = ChessEngine.Move(gameState.board, userClicks[0], userClicks[1])
-                    print(move.getChessNotation())
-                    gameState.makeMove(move)
-                    #reset the piece tracing mechanism
+                    print(move.getChessNotation(gameState.board))
+                    #check if the previous click was from an empty cell
+                    if(move.movedPiece[0] is not "0"):
+                        gameState.makeMove(move)
+                    #reset the piece tracing mechanismz
                     sqSelected = ()
                     userClicks = []
+            elif (event.type == Pyg.KEYUP):
+                print("key pressed")
+                gameState.undoMove()
                     
 
             
