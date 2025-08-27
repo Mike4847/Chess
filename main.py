@@ -55,6 +55,7 @@ def main()->None:
     clock = Pyg.time.Clock()
     screen.fill("white")
     gameState = ChessEngine.GameState()
+    # possibleMoves = gameState.getAllPossibleMoves()
     load_images()
     Running = True
     sqSelected = ()

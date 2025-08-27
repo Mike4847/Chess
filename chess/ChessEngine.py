@@ -8,17 +8,18 @@ class GameState():
     """
     def __init__(self):
         self.board = [
-            ["bR","bN","bB","bQ", "bK","bN","bB","bR"],
+            ["bR","bN","bB","bQ", "bK","bB","bN","bR"],
             ["bp","bp","bp","bp","bp","bp","bp","bp"],
             ["0", "0", "0", "0", "0", "0", "0", "0"],
             ["0", "0", "0", "0", "0", "0", "0", "0"],
             ["0", "0", "0", "0", "0", "0", "0", "0"],
             ["0", "0", "0", "0", "0", "0", "0", "0"],
             ["wp","wp","wp","wp","wp","wp","wp","wp"],
-            ["wR","wN","wB","wQ", "wK","wN","wB","wR"]
+            ["wR","wN","wB","wQ", "wK","wB","wN","wR"]
         ]
         self.WhiteToMove = True
         self.moveLog = []
+        self.MapPieceToMove = {"B": self.BishopMove, "K": self.kingMove, "Q":self.QueenMove, "p": self.PawnMove, "N": self.KNightMove, "R":self.RookMove}
 
     def makeMove(self,move):
         self.board[move.startRow][move.startCol] = "0"
@@ -32,63 +33,60 @@ class GameState():
         !!(NOTE) to undo a move is basically returning the state of the board from where initialy was.
 
         """
-        while(len(self.moveLog) > 0):
+        if(len(self.moveLog) > 0):
+
             move = self.moveLog.pop()
             self.board[move.startRow][move.startCol] = self.board[move.endRow][move.endCol]
             self.board[move.endRow][move.endCol] =  move.CapturedPiece             
             self.WhiteToMove = not self.WhiteToMove
     
-    def PawnMove(self, piece):
-        if (piece[1] == "p"):
-            ...
+    def PawnMove(self,row, col, move):
+        if (self.board[row][col][0] == "w"): #white attack moves
+            #check if the 
+            if((row - 1) >= 0):
+                if(self.board[row-1][col] == "0"):
+                    move.append(Move((row, col), (row - 1, col), self.board))
+                    if (row== 6 and self.board[row - 2][col] == "0"):
+                        move.append(Move((row, col), (row - 2, col), self.board))
+            if ((col + 1) <= 7):
+                if(self.board[row][col + 1] != "0"):
+                    move.append(Move((row, col), (row-1, col + 1), self.board))
+            if (col - 1>= 0):
+                if(self.board[row][col - 1] != "0"):
+                    move.append(Move((row, col), (row-1, col - 1), self.board))
 
-    
+                  
 
 
 
 
-    def validMoves(self):
+    def validMoves(self)->dict:
         return self.getAllPossibleMoves()
 
 
-    def getAllPossibleMoves(self) -> dict:
-        moves = {}
+    def getAllPossibleMoves(self) -> list:
+        moves = []
         for row in range(len(self.board)):
             for col in range(len(self.board[0])):
-                piece = self.board[row][col]
-                pieceColor = piece[0]
-                if pieceColor == 'w' or pieceColor =='b':
-                    pieceType = piece[1]
-                    if(pieceType =="B"):
-
-                        moves[pieceType] = self.BishopMove(piece)                        
-                    if (pieceType == "N"):
-                        moves[pieceType] = self.NightMove(piece)
-                    elif (pieceType == "Q"):
-                        moves[pieceType] = self.QueenMove(piece)
-                    
-                    elif (pieceType == "K"):
-                        moves[pieceType] = self.kingMove(piece)
-                    elif (pieceType == "R"):
-                        moves[pieceType] = self.RookMove(piece)
-                    else :
-                        moves[pieceType] = self.PawnMove(piece)
+                if((self.board[row][col][0] == "w" and self.WhiteToMove ) or (self.board[row][col][0] == "b" and not self.WhiteToMove ) ):
+                    self.MapPieceToMove[self.board[row][col][1]](row, col, moves)
+                
         return moves
     
-    def BishopMove(self, piece):
+    def BishopMove(self,row , col, move):
         pass
     
 
-    def NightMove(self, piece):
+    def KNightMove(self,row , col, move):
         pass
 
-    def QueenMove(self, piece):
+    def QueenMove(self, row , col, move):
         pass
 
-    def RookMove(self, piece):
+    def RookMove(self, row , col, move):
         pass
 
-    def kingMove(self, piece):
+    def kingMove(self, row , col, move):
         pass
 
 
